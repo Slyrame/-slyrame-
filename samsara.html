@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico">
+<title>[ slyrame ] — samsara</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; min-height:100vh; background:#ffffff; font-family:"Courier New",monospace; color:#111111; }
+
+#back { position:fixed; top:14px; left:20px; font-size:11px; color:#111111; text-decoration:none; letter-spacing:2px; z-index:20; }
+#back:hover { opacity:0.5; }
+
+/* ---- LAYOUT ---- */
+#page {
+  display:flex;
+  flex-direction:row;
+  min-height:100vh;
+  padding:80px 60px 180px 60px;
+  gap:60px;
+  max-width:1000px;
+  margin:0 auto;
+}
+
+/* GAUCHE — cover */
+#col-cover {
+  flex-shrink:0;
+  width:320px;
+}
+#col-cover img {
+  width:320px;
+  height:320px;
+  object-fit:contain;
+  display:block;
+  background:#f5f5f5;
+}
+
+/* DROITE — infos + tracklist */
+#col-info {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding-top:4px;
+}
+
+.info-line {
+  font-size:12px;
+  letter-spacing:1px;
+  line-height:1.8;
+  color:#111;
+}
+.info-label {
+  color:rgba(0,0,0,0.4);
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+#album-titre {
+  font-size:22px;
+  letter-spacing:3px;
+  color:#111;
+  margin-bottom:6px;
+  text-transform:lowercase;
+}
+
+#divider {
+  width:100%;
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin:16px 0;
+}
+
+/* TRACKLIST */
+#tracklist {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.track-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 0;
+  cursor:pointer;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  transition:opacity 0.15s;
+}
+.track-item:hover { opacity:0.55; }
+.track-item.actif { opacity:1; }
+.track-item.actif .track-name { font-style:italic; }
+
+.track-play {
+  width:16px;
+  height:16px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:8px;
+  color:rgba(0,0,0,0.3);
+}
+.track-item.actif .track-play { color:#111; }
+
+.track-num {
+  font-size:9px;
+  color:rgba(0,0,0,0.3);
+  width:16px;
+  text-align:right;
+  flex-shrink:0;
+}
+.track-name {
+  font-size:12px;
+  color:#111111;
+  flex:1;
+  letter-spacing:1px;
+}
+.track-dur {
+  font-size:9px;
+  color:rgba(0,0,0,0.35);
+  flex-shrink:0;
+  letter-spacing:1px;
+}
+
+/* PLAYER fixe en bas */
+#player-box {
+  position:fixed;
+  bottom:0; left:0;
+  width:100%;
+  background:#ffffff;
+  border-top:1px solid rgba(0,0,0,0.08);
+  padding:10px 0 14px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  z-index:10;
+}
+
+#player-info { display:flex; flex-direction:column; align-items:center; gap:1px; width:300px; }
+#track-artist { font-size:9px; color:rgba(0,0,0,0.4); letter-spacing:3px; text-transform:uppercase; }
+#track-title  { font-size:13px; color:#111; letter-spacing:1px; text-align:center; }
+#track-album-label { font-size:9px; color:rgba(0,0,0,0.3); letter-spacing:2px; }
+
+#progress-wrap { width:300px; height:2px; background:rgba(0,0,0,0.12); cursor:pointer; position:relative; }
+#progress-bar  { height:2px; background:#111; width:0%; transition:width 0.3s linear; pointer-events:none; }
+#time-display  { font-size:9px; color:rgba(0,0,0,0.4); display:flex; justify-content:space-between; width:300px; }
+
+#controls { display:flex; align-items:center; justify-content:center; gap:24px; }
+.ctrl-btn { background:transparent; border:none; color:#111; cursor:pointer; font-size:18px; padding:0; opacity:0.7; transition:opacity 0.15s; }
+.ctrl-btn:hover { opacity:1; }
+
+#vol-wrap { display:flex; align-items:center; gap:8px; }
+#vol-wrap span { font-size:12px; }
+#vol-slider { -webkit-appearance:none; appearance:none; width:70px; height:2px; background:rgba(0,0,0,0.2); outline:none; cursor:pointer; }
+#vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:9px; height:9px; border-radius:50%; background:#111; cursor:pointer; }
+
+audio { display:none; }
+
+@media (max-width:700px) {
+  #page { flex-direction:column; padding:70px 24px 180px 24px; gap:30px; }
+  #col-cover { width:100%; }
+  #col-cover img { width:100%; height:auto; aspect-ratio:1/1; }
+}
+</style>
+</head>
+<body>
+
+<a id="back" href="./music.html">← music</a>
+
+<div id="page">
+  <div id="col-cover">
+    <img id="album-cover" src="" alt="">
+  </div>
+  <div id="col-info">
+    <div id="album-titre">—</div>
+    <div class="info-line"><span class="info-label">artiste &nbsp;</span><span id="album-artiste">—</span></div>
+    <div class="info-line" id="annee-line" style="display:none"><span class="info-label">année &nbsp;&nbsp;</span><span id="album-annee">—</span></div>
+    <div id="divider"></div>
+    <div id="tracklist"></div>
+  </div>
+</div>
+
+<div id="player-box">
+  <div id="player-info">
+    <div id="track-artist"></div>
+    <div id="track-title">—</div>
+    <div id="track-album-label"></div>
+  </div>
+  <div id="progress-wrap" onclick="seekTo(event)"><div id="progress-bar"></div></div>
+  <div id="time-display"><span id="time-cur">0:00</span><span id="time-dur">0:00</span></div>
+  <div id="controls">
+    <button class="ctrl-btn" onclick="prev()">&#9664;&#9664;</button>
+    <button class="ctrl-btn" id="btn-play" onclick="togglePlay()">&#9654;</button>
+    <button class="ctrl-btn" onclick="next()">&#9654;&#9654;</button>
+  </div>
+  <div id="vol-wrap">
+    <span>&#128264;</span>
+    <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1" oninput="setVol(this.value)">
+  </div>
+</div>
+
+<audio id="audio-el"></audio>
+
+<script>
+var ALBUMS = [
+  {
+    id: "untilted",
+    titre: "untilted project",
+    cover: "untilted.jpg",
+    artiste: "slyrame & romancandle",
+    annee: "",
+    tracks: [
+      { titre: "1", src: "1.mp3" },
+      { titre: "1 (pitched version)", src: "untiltedpitch.mp3" },
+    ]
+  },
+  {
+    id: "samsara",
+    titre: "samsara",
+    cover: "samsara.jpg",
+    artiste: "slyrame",
+    annee: "",
+    tracks: [
+      { titre: "a",                            src: "a.mp3" },
+      { titre: "dans le noir du temps",        src: "dans_le_noir_du_temps.mp3" },
+      { titre: "roman candle cover",           src: "roman_candle_cover.mp3" },
+      { titre: "i believe i'll dust my broom", src: "i_believe_ill_dust_my_broom.mp3" },
+      { titre: "IMG_3403",                     src: "IMG_3403.mp3" },
+    ]
+  },
+];
+
+var audio = document.getElementById('audio-el');
+var flatTracks = [];
+var flatIndex = -1;
+var album;
+
+function getParam(name) {
+  var u = new URLSearchParams(window.location.search);
+  return u.get(name);
+}
+
+function init() {
+  var i = 1;
+  album = ALBUMS[1];
+
+  document.title = '[ slyrame ] — ' + album.titre;
+  document.getElementById('album-cover').src = album.cover || '';
+  document.getElementById('album-titre').textContent = album.titre;
+  document.getElementById('album-artiste').textContent = album.artiste || '';
+  if (album.annee) {
+    document.getElementById('album-annee').textContent = album.annee;
+    document.getElementById('annee-line').style.display = 'block';
+  }
+
+  flatTracks = album.tracks.map(function(t) {
+    return { src:t.src, titre:t.titre, albumTitre:album.titre, artiste:album.artiste };
+  });
+
+  var list = document.getElementById('tracklist');
+  list.innerHTML = '';
+  album.tracks.forEach(function(track, ti) {
+    var item = document.createElement('div');
+    item.className = 'track-item';
+    item.dataset.flat = ti;
+
+    var playIcon = document.createElement('span');
+    playIcon.className = 'track-play';
+    playIcon.textContent = '▶';
+
+    var num = document.createElement('span');
+    num.className = 'track-num';
+    num.textContent = ti + 1;
+
+    var nom = document.createElement('span');
+    nom.className = 'track-name';
+    nom.textContent = track.titre;
+
+    var dur = document.createElement('span');
+    dur.className = 'track-dur';
+    dur.textContent = '';
+    (function(el, src){
+      var a = new Audio();
+      a.src = src;
+      a.addEventListener('loadedmetadata', function(){
+        var s = Math.floor(a.duration);
+        el.textContent = Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;
+      });
+    })(dur, track.src);
+
+    item.appendChild(playIcon);
+    item.appendChild(num);
+    item.appendChild(nom);
+    item.appendChild(dur);
+    item.onclick = function() { jouer(ti); };
+    list.appendChild(item);
+  });
+}
+
+function jouer(fi) {
+  if (fi < 0 || fi >= flatTracks.length) return;
+  var t = flatTracks[fi];
+  flatIndex = fi;
+  document.querySelectorAll('.track-item').forEach(function(el){ el.classList.remove('actif'); });
+  var el = document.querySelector('.track-item[data-flat="'+fi+'"]');
+  if (el) el.classList.add('actif');
+  document.getElementById('track-title').textContent = t.titre;
+  document.getElementById('track-artist').textContent = t.artiste || '';
+  document.getElementById('track-album-label').textContent = t.albumTitre || '';
+  audio.src = t.src;
+  audio.play();
+  document.getElementById('btn-play').innerHTML = '&#9646;&#9646;';
+}
+
+function togglePlay() {
+  if (flatIndex === -1) { if (flatTracks.length) jouer(0); return; }
+  if (audio.paused) { audio.play(); document.getElementById('btn-play').innerHTML='&#9646;&#9646;'; }
+  else { audio.pause(); document.getElementById('btn-play').innerHTML='&#9654;'; }
+}
+function prev() { jouer(flatIndex <= 0 ? flatTracks.length-1 : flatIndex-1); }
+function next() { jouer(flatIndex >= flatTracks.length-1 ? 0 : flatIndex+1); }
+function setVol(v) { audio.volume = v; }
+function seekTo(e) {
+  if (!audio.duration) return;
+  var rect = document.getElementById('progress-wrap').getBoundingClientRect();
+  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+}
+function fmt(s) { s=Math.floor(s||0); return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
+
+audio.addEventListener('timeupdate', function() {
+  if (!audio.duration) return;
+  document.getElementById('progress-bar').style.width = (audio.currentTime/audio.duration*100)+'%';
+  document.getElementById('time-cur').textContent = fmt(audio.currentTime);
+  document.getElementById('time-dur').textContent = fmt(audio.duration);
+});
+audio.addEventListener('ended', function() { document.getElementById('btn-play').innerHTML='&#9654;'; next(); });
+
+window.onload = init;
+</script>
+</body>
+</html>

@@ -7,129 +7,131 @@
 <title>[ slyrame ] — music</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; background:#ffffff; font-family:"Courier New",monospace; color:#111111; overflow-x:hidden; }
+html, body { width:100%; min-height:100vh; background:#ffffff; font-family:"Courier New",monospace; color:#111111; overflow-x:hidden; }
 
-#back { position:fixed; top:14px; left:50%; transform:translateX(-50%); font-size:11px; color:#111111; text-decoration:none; letter-spacing:2px; z-index:20; }
+#back { position:fixed; top:14px; left:20px; font-size:11px; color:#111111; text-decoration:none; letter-spacing:2px; z-index:20; }
 #back:hover { opacity:0.5; }
 #donate { position:fixed; bottom:18px; right:20px; font-size:10px; color:#111111; text-decoration:none; letter-spacing:2px; border:1px solid rgba(0,0,0,0.12); padding:5px 10px; z-index:20; transition:opacity 0.2s; }
 #donate:hover { opacity:0.5; }
 
-/* ---- LAYOUT 3 COLONNES ---- */
-#page { display:flex; flex-direction:row; min-height:100vh; width:100%; }
-
-/* GAUCHE : BBS */
-#col-left {
-  width:260px;
-  min-width:200px;
-  padding:60px 16px 24px 16px;
+/* ---- LAYOUT ---- */
+#page {
   display:flex;
-  flex-direction:column;
-  gap:8px;
-  flex-shrink:0;
+  flex-direction:row;
+  min-height:100vh;
+  width:100%;
 }
 
-#bbs-messages { height:320px; overflow-y:auto; font-size:13px; line-height:1.7; scrollbar-width:none; }
+/* BBS — petit, fixé à gauche */
+#col-bbs {
+  width:180px;
+  min-width:140px;
+  flex-shrink:0;
+  padding:60px 12px 24px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  border-right:1px solid rgba(0,0,0,0.05);
+}
+
+#bbs-messages {
+  height:200px;
+  overflow-y:auto;
+  font-size:10px;
+  line-height:1.6;
+  scrollbar-width:none;
+  color:rgba(0,0,0,0.6);
+}
 #bbs-messages::-webkit-scrollbar { display:none; }
-.msg-entry { margin-bottom:10px; }
-.msg-pseudo { font-weight:bold; font-size:13px; }
-.msg-date { color:rgba(0,0,0,0.35); font-size:10px; margin-left:5px; }
-.msg-text { font-size:13px; margin-top:2px; word-break:break-word; }
+.msg-entry { margin-bottom:8px; }
+.msg-pseudo { font-weight:bold; font-size:10px; color:#111; }
+.msg-date { color:rgba(0,0,0,0.28); font-size:9px; }
+.msg-text { font-size:10px; margin-top:1px; word-break:break-word; }
 
-#col-left input[type="text"], #col-left textarea {
-  background:transparent; border:none; border-bottom:1px solid rgba(0,0,0,0.3);
-  color:#111111; font-family:"Courier New",monospace; font-size:13px;
-  width:100%; outline:none; padding:2px 3px;
+#col-bbs input[type="text"], #col-bbs textarea {
+  background:transparent; border:none; border-bottom:1px solid rgba(0,0,0,0.2);
+  color:#111111; font-family:"Courier New",monospace; font-size:10px;
+  width:100%; outline:none; padding:2px 2px;
 }
-#col-left textarea { height:52px; resize:none; margin-top:6px; border:1px solid rgba(0,0,0,0.2); padding:3px; }
-#col-left button { background:transparent; border:1px solid rgba(0,0,0,0.4); color:#111111; font-family:"Courier New",monospace; font-size:12px; cursor:pointer; padding:4px 14px; margin-top:6px; letter-spacing:1px; width:fit-content; }
-#col-left button:hover { background:rgba(0,0,0,0.05); }
-
-/* CENTRE : vide */
-#col-center { flex:1; }
-
-/* DROITE : grille covers + lecteur */
-#col-right {
-  width:420px;
-  min-width:300px;
-  display:flex;
-  flex-direction:column;
-  flex-shrink:0;
-  padding-bottom:160px;
+#col-bbs textarea { height:40px; resize:none; margin-top:4px; border:1px solid rgba(0,0,0,0.15); padding:3px; font-size:10px; }
+#col-bbs button {
+  background:transparent; border:1px solid rgba(0,0,0,0.3); color:#111111;
+  font-family:"Courier New",monospace; font-size:9px; cursor:pointer;
+  padding:3px 10px; margin-top:4px; letter-spacing:1px; width:fit-content;
 }
+#col-bbs button:hover { background:rgba(0,0,0,0.04); }
+#bbs-label { font-size:9px; color:rgba(0,0,0,0.28); letter-spacing:2px; margin-bottom:4px; }
 
-/* GRILLE COVERS */
-#album-grid {
-  display:grid;
-  grid-template-columns:120px 120px;
-  width:100%;
-  flex-shrink:0;
-  padding-top:50px;
-  column-gap:6px;
-  row-gap:16px;
-  padding-left:16px;
-  padding-right:16px;
-}
-
-.album-block { width:100%; display:flex; flex-direction:column; }
-
-.album-card { position:relative; cursor:pointer; }
-.album-card img { width:100%; aspect-ratio:1/1; object-fit:contain; display:block; transition:opacity 0.2s; }
-.album-card:hover img { opacity:0.75; }
-
-.album-card-title { font-size:10px; color:#111111; letter-spacing:2px; text-transform:uppercase; padding:5px 0 0 0; display:block; }
-
-/* TRACKLIST */
-.track-list { display:none; flex-direction:column; }
-.album-block.open .track-list { display:flex; }
-.track-item { display:flex; align-items:center; gap:8px; padding:8px 12px; cursor:pointer; border-bottom:1px dashed rgba(0,0,0,0.07); transition:background 0.1s; }
-.track-item:hover { background:rgba(0,0,0,0.03); }
-.track-item.actif { background:rgba(0,0,0,0.06); }
-.track-num { font-size:10px; color:rgba(0,0,0,0.35); width:16px; text-align:right; flex-shrink:0; }
-.track-name { font-size:12px; color:#111111; flex:1; letter-spacing:0.5px; }
-.track-item.actif .track-name { font-style:italic; }
-
-/* LECTEUR fixe pleine largeur en bas */
-#player-box {
-  position:fixed;
-  bottom:0; left:0;
-  width:100%;
-  background:#ffffff;
-  border-top:1px solid rgba(0,0,0,0.08);
-  padding:12px 0 16px 0;
+/* CENTRE — albums */
+#col-main {
+  flex:1;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:8px;
-  z-index:10;
+  padding:60px 40px 60px 40px;
 }
 
-#player-info { display:flex; flex-direction:column; align-items:center; gap:2px; width:280px; }
-#progress-wrap { width:280px; height:2px; background:rgba(0,0,0,0.12); cursor:pointer; position:relative; }
-#progress-bar { height:2px; background:#111111; width:0%; transition:width 0.3s linear; pointer-events:none; }
-#time-display { font-size:10px; color:rgba(0,0,0,0.4); display:flex; justify-content:space-between; width:280px; }
+#albums-label {
+  font-size:28px;
+  letter-spacing:6px;
+  text-transform:uppercase;
+  color:#111;
+  margin-bottom:40px;
+  font-weight:normal;
+}
 
-#track-artist { font-size:9px; color:rgba(0,0,0,0.4); letter-spacing:3px; text-transform:uppercase; }
-#track-title { font-size:14px; color:#111111; letter-spacing:1px; text-align:center; }
-#track-album-label { font-size:9px; color:rgba(0,0,0,0.35); letter-spacing:2px; }
+#album-grid {
+  display:flex;
+  flex-direction:row;
+  gap:40px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
 
-#controls { display:flex; align-items:center; justify-content:center; gap:24px; }
-.ctrl-btn { background:transparent; border:none; color:#111111; cursor:pointer; font-size:20px; padding:0; opacity:0.8; transition:opacity 0.15s; }
-.ctrl-btn:hover { opacity:1; }
+.album-card {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  width:180px;
+  text-decoration:none;
+  color:#111;
+}
 
-#vol-wrap { display:flex; align-items:center; gap:8px; width:280px; justify-content:center; }
-#vol-wrap span { font-size:13px; }
-#vol-slider { -webkit-appearance:none; appearance:none; width:80px; height:2px; background:rgba(0,0,0,0.2); outline:none; cursor:pointer; }
-#vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:10px; height:10px; border-radius:50%; background:#111111; cursor:pointer; }
+.album-card img {
+  width:180px;
+  height:180px;
+  object-fit:contain;
+  display:block;
+  background:#f5f5f5;
+  transition:opacity 0.2s;
+}
+.album-card:hover img { opacity:0.7; }
 
-audio { display:none; }
+.album-card-title {
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:rgba(0,0,0,0.5);
+  margin-top:8px;
+  text-align:center;
+}
+.album-card-artist {
+  font-size:9px;
+  letter-spacing:1px;
+  color:rgba(0,0,0,0.3);
+  margin-top:3px;
+  text-align:center;
+}
 
-/* MOBILE */
 @media (max-width:700px) {
   #page { flex-direction:column; }
-  #col-left { order:3; width:100%; padding:20px 16px 80px 16px; }
-  #col-center { display:none; }
-  #col-right { order:1; width:100%; min-width:0; }
-  #album-grid { grid-template-columns:1fr 1fr; }
+  #col-bbs { width:100%; border-right:none; border-bottom:1px solid rgba(0,0,0,0.05); padding:50px 16px 16px 16px; }
+  #bbs-messages { height:120px; }
+  #col-main { padding:30px 20px 60px 20px; }
+  #albums-label { font-size:20px; }
+  .album-card { width:140px; }
+  .album-card img { width:140px; height:140px; }
 }
 </style>
 </head>
@@ -140,60 +142,40 @@ audio { display:none; }
 
 <div id="page">
 
-  <!-- GAUCHE BBS -->
-  <div id="col-left">
+  <div id="col-bbs">
+    <div id="bbs-label">messages</div>
     <div id="bbs-messages"></div>
     <input type="text" id="pseudo" placeholder="pseudo">
     <textarea id="msg" placeholder="message..."></textarea>
     <button onclick="poster()">SEND</button>
   </div>
 
-  <!-- CENTRE -->
-  <div id="col-center"></div>
-
-  <!-- DROITE : grille + lecteur -->
-  <div id="col-right">
+  <div id="col-main">
+    <div id="albums-label">Albums</div>
     <div id="album-grid"></div>
-
-    <div id="player-box">
-      <div id="player-info">
-        <div id="track-artist"></div>
-        <div id="track-title">—</div>
-        <div id="track-album-label"></div>
-      </div>
-      <div id="progress-wrap" onclick="seekTo(event)"><div id="progress-bar"></div></div>
-      <div id="time-display"><span id="time-cur">0:00</span><span id="time-dur">0:00</span></div>
-      <div id="controls">
-        <button class="ctrl-btn" onclick="prev()">&#9664;&#9664;</button>
-        <button class="ctrl-btn" id="btn-play" onclick="togglePlay()">&#9654;</button>
-        <button class="ctrl-btn" onclick="next()">&#9654;&#9654;</button>
-      </div>
-      <div id="vol-wrap">
-        <span>&#128264;</span>
-        <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1" oninput="setVol(this.value)">
-      </div>
-    </div>
   </div>
 
 </div>
 
-<audio id="audio-el"></audio>
-
 <script>
 var ALBUMS = [
   {
+    id: "untilted",
     titre: "untilted project",
     cover: "untilted.jpg",
     artiste: "slyrame & romancandle",
+    annee: "",
     tracks: [
       { titre: "1", src: "1.mp3" },
       { titre: "1 (pitched version)", src: "untiltedpitch.mp3" },
     ]
   },
   {
+    id: "samsara",
     titre: "samsara",
     cover: "samsara.jpg",
     artiste: "slyrame",
+    annee: "",
     tracks: [
       { titre: "a",                            src: "a.mp3" },
       { titre: "dans le noir du temps",        src: "dans_le_noir_du_temps.mp3" },
@@ -204,107 +186,37 @@ var ALBUMS = [
   },
 ];
 
-var audio = document.getElementById('audio-el');
-var flatTracks = [];
-var flatIndex = -1;
-
-function initMedia() {
+// Stocker les données dans sessionStorage pour la page album
+function initGrid() {
+  sessionStorage.setItem('slyrame_albums', JSON.stringify(ALBUMS));
   var grid = document.getElementById('album-grid');
   grid.innerHTML = '';
-  flatTracks = [];
-
-  ALBUMS.forEach(function(album, ai) {
-    var block = document.createElement('div');
-    block.className = 'album-block';
-
-    var card = document.createElement('div');
+  ALBUMS.forEach(function(album, i) {
+    var card = document.createElement('a');
     card.className = 'album-card';
+    var pages = ['untilted.html', 'samsara.html'];
+    card.href = pages[i] || 'album.html?i=' + i;
+
     var img = document.createElement('img');
     img.src = album.cover || '';
     img.alt = album.titre;
+
+    var title = document.createElement('div');
+    title.className = 'album-card-title';
+    title.textContent = album.titre;
+
+    var artist = document.createElement('div');
+    artist.className = 'album-card-artist';
+    artist.textContent = album.artiste;
+
     card.appendChild(img);
-    card.onclick = function() { toggleAlbum(block); };
-
-    var titleEl = document.createElement('div');
-    titleEl.className = 'album-card-title';
-    titleEl.textContent = album.titre;
-
-    var tlist = document.createElement('div');
-    tlist.className = 'track-list';
-
-    album.tracks.forEach(function(track, ti) {
-      var flatIdx = flatTracks.length;
-      flatTracks.push({ src:track.src, titre:track.titre, albumTitre:album.titre, artiste:album.artiste });
-
-      var item = document.createElement('div');
-      item.className = 'track-item';
-      item.dataset.flat = flatIdx;
-
-      var num = document.createElement('span');
-      num.className = 'track-num';
-      num.textContent = ti + 1;
-
-      var nom = document.createElement('span');
-      nom.className = 'track-name';
-      nom.textContent = track.titre;
-
-      item.appendChild(num);
-      item.appendChild(nom);
-      item.onclick = function(e) { e.stopPropagation(); jouer(flatIdx); };
-      tlist.appendChild(item);
-    });
-
-    block.appendChild(card);
-    block.appendChild(titleEl);
-    block.appendChild(tlist);
-    grid.appendChild(block);
+    card.appendChild(title);
+    card.appendChild(artist);
+    grid.appendChild(card);
   });
 }
 
-function toggleAlbum(block) {
-  var wasOpen = block.classList.contains('open');
-  document.querySelectorAll('.album-block').forEach(function(b){ b.classList.remove('open'); });
-  if (!wasOpen) block.classList.add('open');
-}
-
-function jouer(fi) {
-  if (fi < 0 || fi >= flatTracks.length) return;
-  var t = flatTracks[fi];
-  flatIndex = fi;
-  document.querySelectorAll('.track-item').forEach(function(el){ el.classList.remove('actif'); });
-  var el = document.querySelector('.track-item[data-flat="'+fi+'"]');
-  if (el) el.classList.add('actif');
-  document.getElementById('track-title').textContent = t.titre;
-  document.getElementById('track-artist').textContent = t.artiste || '';
-  document.getElementById('track-album-label').textContent = t.albumTitre || '';
-  audio.src = t.src;
-  audio.play();
-  document.getElementById('btn-play').innerHTML = '&#9646;&#9646;';
-}
-
-function togglePlay() {
-  if (flatIndex === -1) { if (flatTracks.length) jouer(0); return; }
-  if (audio.paused) { audio.play(); document.getElementById('btn-play').innerHTML = '&#9646;&#9646;'; }
-  else { audio.pause(); document.getElementById('btn-play').innerHTML = '&#9654;'; }
-}
-function prev() { if (flatIndex<=0) jouer(flatTracks.length-1); else jouer(flatIndex-1); }
-function next() { if (flatIndex>=flatTracks.length-1) jouer(0); else jouer(flatIndex+1); }
-function setVol(v) { audio.volume = v; }
-function seekTo(e) {
-  if (!audio.duration) return;
-  var rect = document.getElementById('progress-wrap').getBoundingClientRect();
-  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
-}
-function fmt(s) { s=Math.floor(s||0); return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
-
-audio.addEventListener('timeupdate', function() {
-  if (!audio.duration) return;
-  document.getElementById('progress-bar').style.width = (audio.currentTime/audio.duration*100)+'%';
-  document.getElementById('time-cur').textContent = fmt(audio.currentTime);
-  document.getElementById('time-dur').textContent = fmt(audio.duration);
-});
-audio.addEventListener('ended', function() { document.getElementById('btn-play').innerHTML='&#9654;'; next(); });
-
+// BBS Firebase
 var DB_URL = "https://test-a3c23-default-rtdb.europe-west1.firebasedatabase.app/messages";
 function initFirebase() { chargerFirebase(); setInterval(chargerFirebase, 3000); }
 function chargerFirebase() {
@@ -316,9 +228,12 @@ function chargerFirebase() {
 }
 function afficher(msgs) {
   var c = document.getElementById('bbs-messages');
-  if (!msgs||!msgs.length) { c.innerHTML='<div style="color:rgba(0,0,0,0.28);font-size:12px;font-style:italic;">aucun message</div>'; return; }
+  if (!msgs||!msgs.length) { c.innerHTML='<div style="color:rgba(0,0,0,0.28);font-size:9px;font-style:italic;">aucun message</div>'; return; }
   var h='';
-  for (var i=msgs.length-1;i>=0;i--) { var m=msgs[i]; h+='<div class="msg-entry"><span class="msg-pseudo">'+x(m.p)+'</span><span class="msg-date"> '+m.d+'</span><div class="msg-text">'+x(m.t).replace(/\n/g,'<br>')+'</div></div>'; }
+  for (var i=msgs.length-1;i>=0;i--) {
+    var m=msgs[i];
+    h+='<div class="msg-entry"><span class="msg-pseudo">'+x(m.p)+'</span> <span class="msg-date">'+m.d+'</span><div class="msg-text">'+x(m.t).replace(/\n/g,'<br>')+'</div></div>';
+  }
   c.innerHTML=h;
 }
 function x(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -332,7 +247,7 @@ function poster() {
     .then(function(){ document.getElementById('msg').value=''; chargerFirebase(); });
 }
 
-window.onload = function(){ initMedia(); initFirebase(); };
+window.onload = function(){ initGrid(); initFirebase(); };
 </script>
 </body>
 </html>
