@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico">
+<title>[ slyrame ] — blog</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: "Courier New", monospace;
+  color: #111111;
+}
+
+#back {
+  position: fixed;
+  top: 14px;
+  left: 20px;
+  font-size: 11px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 2px;
+  z-index: 10;
+}
+#back:hover { color: #111111; }
+
+
+#page { position: relative; z-index: 1; }
+
+#page {
+  max-width: 620px;
+  padding: 70px 30px 80px 30px;
+}
+
+.entry {
+  margin-bottom: 52px;
+}
+
+.entry-date {
+  font-size: 11px;
+  color: #111111;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.entry-text {
+  font-size: 15px;
+  color: #111111;
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  #page { padding: 60px 18px 60px 18px; }
+  .entry-text { font-size: 13px; }
+}
+
+/* séparateur discret entre entrées */
+.entry + .entry {
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 52px;
+  margin-top: 0;
+}
+</style>
+</head>
+<body>
+
+<a id="back" href="./index.html">← accueil</a>
+
+<div id="page">
+  <!-- les entrées sont générées par JS depuis le tableau ci-dessous -->
+</div>
+
+<script>
+// =====================================================
+//  JOURNAL — ajoute tes entrées ici
+//  date : "jour mois année  HHhMM"  (comme tu veux)
+//  texte : ce que tu veux écrire,
+//          tu peux sauter des lignes avec \n
+// =====================================================
+var ENTREES = [
+
+  {
+    date:  "01 mai 2026  03h14",
+    texte: "je regarde au loin\nj'ai peur du coin\nil me regarde\nil me fait peur"
+  },
+
+  // {
+  //   date:  "02 mai 2026  21h30",
+  //   texte: "deuxième entrée...",
+  // },
+
+];
+// =====================================================
+
+function init() {
+  var page = document.getElementById('page');
+  if (!ENTREES.length) {
+    page.innerHTML = '<p style="color:#111111;font-size:13px;letter-spacing:2px;margin-top:40px;">rien encore.</p>';
+    return;
+  }
+  // on affiche du plus récent au plus ancien
+  var liste = ENTREES.slice().reverse();
+  liste.forEach(function(e) {
+    var div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML =
+      '<div class="entry-date">' + e.date + '</div>' +
+      '<div class="entry-text">' + esc(e.texte) + '</div>';
+    page.appendChild(div);
+  });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+window.onload = function(){ init();  };
+
+
+</script>
+</body>
+</html>

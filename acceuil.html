@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="1ykLzuNY3dpG39K-SFoSUV8e-hxqV6rSosROJQkBH10">
+<meta name="description" content="[ slyrame ] — musique, film, blog.">
+<link rel="icon" href="favicon.ico">
+<title>[ slyrame ]</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #000000;
+  font-family: "Comic Sans MS", cursive;
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.menu-btn {
+  display: block;
+  font-family: "Courier New", monospace;
+  font-size: 22px;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 3px;
+  padding: 6px 28px;
+  border: 1px solid rgba(255,255,255,0.55);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-align: center;
+  min-width: 180px;
+  position: relative;
+}
+
+.menu-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: #ffffff;
+  border-color: rgba(255,255,255,0.9);
+}
+
+/* images flottantes */
+.ghost-img {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  max-width: 220px;
+  max-height: 220px;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* texte fantôme flottant */
+.ghost-text {
+  position: fixed;
+  pointer-events: none;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0);
+  letter-spacing: 2px;
+  z-index: 0;
+  white-space: nowrap;
+  transition: color 1.2s ease, opacity 1.2s ease;
+  user-select: none;
+}
+
+#menu { position: relative; z-index: 1; }
+
+@media (max-width: 600px) {
+  .menu-btn {
+    font-size: 18px;
+    min-width: 140px;
+    padding: 8px 20px;
+    letter-spacing: 2px;
+  }
+  .ghost-text { font-size: 9px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="menu">
+  <a class="menu-btn" href="music.html" data-text="music">music</a>
+  <a class="menu-btn" href="film.html"  data-text="film">film</a>
+  <a class="menu-btn" href="blog.html"  data-text="blog">blog</a>
+</nav>
+
+<script>
+// =====================================================
+//  IMAGES FLOTTANTES
+// =====================================================
+var IMGS = ["IMG_4344.jpg"];
+
+function spawnImg() {
+  if (window.innerWidth <= 700) return;
+  var src = IMGS[Math.floor(Math.random() * IMGS.length)];
+  var img = document.createElement('img');
+  img.className = 'ghost-img';
+  img.src = src;
+  var maxX = window.innerWidth  - 240;
+  var maxY = window.innerHeight - 240;
+  img.style.left = Math.floor(Math.random() * maxX) + 'px';
+  img.style.top  = Math.floor(Math.random() * maxY) + 'px';
+  var size = 80 + Math.floor(Math.random() * 160);
+  img.style.maxWidth  = size + 'px';
+  img.style.maxHeight = size + 'px';
+  var targetOpacity = 0.35 + Math.random() * 0.45;
+  document.body.appendChild(img);
+  img.style.opacity = targetOpacity;
+  var stay = 1500 + Math.random() * 3500;
+  setTimeout(function(){ img.remove(); }, stay);
+  setTimeout(spawnImg, 800 + Math.random() * 3200);
+}
+
+// =====================================================
+//  TEXTES FANTÔMES
+// =====================================================
+var FRAGMENTS = [
+  "tu ne te souviens pas",
+  "48.234°N  7.561°E",
+  "quelqu'un t'observe",
+  "ça recommence",
+  "elle est revenue",
+  "ne regarde pas derrière",
+  "samsara",
+  "encore et encore",
+  "je t'ai vu hier",
+  "03:14",
+  "tout est déjà arrivé",
+  "ferme les yeux",
+  "le signal est perdu",
+  "où es-tu ?",
+  "je cherche encore",
+  "lovesick",
+  "rien ne finit vraiment",
+  "N 48° 31.404  E 007° 33.612",
+  "reste",
+  "elle sourit dans le noir",
+  "boucle #7",
+  "tu l'as oublié",
+  "searching",
+];
+
+function spawnText() {
+  var frag = FRAGMENTS[Math.floor(Math.random() * FRAGMENTS.length)];
+  var el = document.createElement('div');
+  el.className = 'ghost-text';
+  el.textContent = frag;
+
+  var maxX = window.innerWidth  - 300;
+  var maxY = window.innerHeight - 40;
+  el.style.left = Math.max(10, Math.floor(Math.random() * maxX)) + 'px';
+  el.style.top  = Math.max(10, Math.floor(Math.random() * maxY)) + 'px';
+
+  var opacity = 0.06 + Math.random() * 0.18;
+  document.body.appendChild(el);
+
+  setTimeout(function(){
+    el.style.color = 'rgba(255,255,255,' + opacity + ')';
+  }, 50);
+
+  var stay = 2000 + Math.random() * 4000;
+  setTimeout(function(){
+    el.style.color = 'rgba(255,255,255,0)';
+    setTimeout(function(){ el.remove(); }, 1300);
+  }, stay);
+
+  // entre 45s et 90s avant le prochain
+  setTimeout(spawnText, 45000 + Math.random() * 45000);
+}
+
+// =====================================================
+//  SCRAMBLE INFINI — pause au survol
+// =====================================================
+var CHARS = 'abcdefghijklmnopqrstuvwxyz@#$%&?!0123456789';
+var scrambleTimers = {};
+
+function startScramble(btn) {
+  var len = btn.dataset.text.length;
+  scrambleTimers[btn.dataset.text + btn] = setInterval(function() {
+    var result = '';
+    for (var i = 0; i < len; i++) {
+      result += CHARS[Math.floor(Math.random() * CHARS.length)];
+    }
+    btn.textContent = result;
+  }, 30);
+}
+
+function stopScramble(btn) {
+  clearInterval(scrambleTimers[btn.dataset.text + btn]);
+  btn.textContent = btn.dataset.text;
+}
+
+document.querySelectorAll('.menu-btn').forEach(function(btn) {
+  startScramble(btn);
+  btn.addEventListener('mouseenter', function(){ stopScramble(btn); });
+  btn.addEventListener('mouseleave', function(){ startScramble(btn); });
+});
+
+// =====================================================
+//  TITRE ONGLET QUI CHANGE
+// =====================================================
+var TITRES = [
+  "[ slyrame ]",
+  "tu es là ?",
+  "samsara",
+  "elle cherche encore",
+  "…",
+  "ne pars pas",
+  "lovesick",
+  "reviens",
+  "[ slyrame ]",
+  "qui est là",
+  "03h14",
+  "searching…",
+];
+var titreIdx = 0;
+
+function rotateTitre() {
+  titreIdx = (titreIdx + 1) % TITRES.length;
+  document.title = TITRES[titreIdx];
+  var delay = 3000 + Math.random() * 5000;
+  setTimeout(rotateTitre, delay);
+}
+
+// =====================================================
+//  PAGE CACHÉE — code clavier : S A M S A R A
+// =====================================================
+var SECRET_CODE = ['s','a','m','s','a','r','a'];
+var typed = [];
+
+document.addEventListener('keydown', function(e) {
+  typed.push(e.key.toLowerCase());
+  if (typed.length > SECRET_CODE.length) typed.shift();
+  if (typed.join('') === SECRET_CODE.join('')) {
+    window.location.href = 'secret.html';
+  }
+});
+
+// =====================================================
+window.onload = function(){
+  setTimeout(spawnImg,  600);
+  setTimeout(spawnText, 1500);
+  setTimeout(rotateTitre, 4000);
+};
+</script>
+
+</body>
+</html>

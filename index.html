@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="1ykLzuNY3dpG39K-SFoSUV8e-hxqV6rSosROJQkBH10">
+<meta name="description" content="[ slyrame ] — musique, film, blog.">
+<link rel="icon" href="favicon.ico">
+<title>[ slyrame ]</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: "Courier New", monospace;
+  color: #111111;
+  overflow-x: hidden;
+}
+
+.menu-btn {
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 3px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+.menu-btn:hover { opacity: 0.5; }
+
+#layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  align-items: stretch;
+}
+
+#col-left {
+  width: 320px;
+  min-width: 260px;
+  flex-shrink: 0;
+  padding: 60px 40px 60px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+#hi-text {
+  font-size: 13px;
+  color: #111111;
+  letter-spacing: 1px;
+  line-height: 1.7;
+}
+
+#col-right {
+  flex: 1;
+  position: relative;
+  min-height: 100vh;
+}
+
+#drag-img {
+  position: fixed;
+  cursor: grab;
+  user-select: none;
+  z-index: 1;
+  display: block;
+}
+#drag-img.grabbing { cursor: grabbing; }
+
+.ghost-text {
+  position: fixed;
+  pointer-events: none;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  color: rgba(0,0,0,0);
+  letter-spacing: 2px;
+  z-index: 0;
+  white-space: nowrap;
+  transition: color 1.5s ease;
+  user-select: none;
+}
+
+@media (max-width: 700px) {
+  #layout {
+    flex-direction: column;
+  }
+  #col-right {
+    width: 100%;
+    min-height: 0;
+  }
+  #col-left {
+    width: 100%;
+    min-width: 0;
+    padding: 24px 10% 60px 10%;
+    z-index: 2;
+    background: #ffffff;
+  }
+  #drag-img {
+    position: relative !important;
+    width: 80% !important;
+    height: auto !important;
+    object-fit: contain;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    cursor: default;
+    display: block;
+    z-index: 0;
+    margin: 24px auto 0 auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="layout">
+  <img id="drag-img" src="baby.JPG" alt="" draggable="false">
+  <div id="col-left">
+    <div id="hi-text">Hi! I make music.</div>
+    <a class="menu-btn" href="music.html" data-text="music">music</a>
+    <a class="menu-btn" href="film.html"  data-text="film">film</a>
+    <a class="menu-btn" href="blog.html"  data-text="blog">blog</a>
+    <div style="font-family:'Courier New',monospace;font-size:11px;letter-spacing:3px;color:rgba(17,17,17,0.35);margin-top:10px;">social</div>
+    <a class="menu-btn" href="https://www.instagram.com/musichastheright2children/" target="_blank" rel="noopener">instagram</a>
+  </div>
+  <div id="col-right"></div>
+</div>
+
+<script>
+// =====================================================
+//  TEXTES FANTOMES
+// =====================================================
+var FRAGMENTS = [
+  "tu ne te souviens pas","quelqu'un t'observe","ca recommence",
+  "elle est revenue","samsara","encore et encore","03:14",
+  "tout est deja arrive","ferme les yeux","le signal est perdu",
+  "lovesick","rien ne finit vraiment","reste","boucle #7","searching",
+];
+
+function spawnText() {
+  var frag = FRAGMENTS[Math.floor(Math.random() * FRAGMENTS.length)];
+  var el = document.createElement('div');
+  el.className = 'ghost-text';
+  el.textContent = frag;
+  el.style.left = Math.max(10, Math.floor(Math.random() * (window.innerWidth - 300))) + 'px';
+  el.style.top  = Math.max(10, Math.floor(Math.random() * (window.innerHeight - 40))) + 'px';
+  var op = 0.04 + Math.random() * 0.10;
+  document.body.appendChild(el);
+  setTimeout(function(){ el.style.color = 'rgba(0,0,0,' + op + ')'; }, 50);
+  var stay = 2500 + Math.random() * 4000;
+  setTimeout(function(){
+    el.style.color = 'rgba(0,0,0,0)';
+    setTimeout(function(){ el.remove(); }, 1500);
+  }, stay);
+  setTimeout(spawnText, 45000 + Math.random() * 45000);
+}
+
+// =====================================================
+//  SCRAMBLE BOUTONS
+// =====================================================
+var CHARS = 'abcdefghijklmnopqrstuvwxyz@#$%&?!0123456789';
+var scrambleTimers = {};
+
+function startScramble(btn) {
+  var original = btn.dataset.text;
+  if (!original) return;
+  var key = original + btn.href;
+  scrambleTimers[key] = setInterval(function() {
+    var result = '';
+    for (var i = 0; i < original.length; i++) result += CHARS[Math.floor(Math.random() * CHARS.length)];
+    btn.textContent = result;
+  }, 30);
+}
+
+function stopScramble(btn) {
+  var original = btn.dataset.text;
+  if (!original) return;
+  clearInterval(scrambleTimers[original + btn.href]);
+  btn.textContent = original;
+}
+
+document.querySelectorAll('.menu-btn[data-text]').forEach(function(btn) {
+  startScramble(btn);
+  btn.addEventListener('mouseenter', function(){ stopScramble(btn); });
+  btn.addEventListener('mouseleave', function(){ startScramble(btn); });
+});
+
+// =====================================================
+//  TITRE ONGLET
+// =====================================================
+var TITRES = [
+  "[ slyrame ]","tu es la ?","samsara","elle cherche encore",
+  "...","ne pars pas","lovesick","reviens","qui est la","03h14","searching...",
+];
+var titreIdx = 0;
+function rotateTitre() {
+  titreIdx = (titreIdx + 1) % TITRES.length;
+  document.title = TITRES[titreIdx];
+  setTimeout(rotateTitre, 3000 + Math.random() * 5000);
+}
+
+// =====================================================
+//  SECRET CODE : samsara
+// =====================================================
+var SECRET_CODE = ['s','a','m','s','a','r','a'];
+var typed = [];
+document.addEventListener('keydown', function(e) {
+  typed.push(e.key.toLowerCase());
+  if (typed.length > SECRET_CODE.length) typed.shift();
+  if (typed.join('') === SECRET_CODE.join('')) {
+    window.location.href = 'lilougosden13112006_searchinglove.html';
+  }
+});
+
+// =====================================================
+//  DRAG IMAGE
+// =====================================================
+var dragImg = document.getElementById('drag-img');
+var isDragging = false;
+var dragStartX, dragStartY, posLeft, posTop;
+
+function setupImg() {
+  var colW  = 320;
+  var availW = window.innerWidth - colW;
+  var availH = window.innerHeight;
+  var nw = dragImg.naturalWidth;
+  var nh = dragImg.naturalHeight;
+  if (!nw || !nh) return;
+
+  // Scale to fit without cropping (object-fit: contain equivalent)
+  var scale = Math.min(availW / nw, availH / nh);
+  var w = nw * scale;
+  var h = nh * scale;
+
+  posLeft = colW + (availW - w) / 2;
+  posTop  = (availH - h) / 2;
+
+  dragImg.style.width  = w + 'px';
+  dragImg.style.height = h + 'px';
+  dragImg.style.left   = posLeft + 'px';
+  dragImg.style.top    = posTop  + 'px';
+}
+
+dragImg.addEventListener('mousedown', function(e) {
+  e.preventDefault();
+  posLeft = parseFloat(dragImg.style.left) || 0;
+  posTop  = parseFloat(dragImg.style.top)  || 0;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  isDragging = true;
+  dragImg.classList.add('grabbing');
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (!isDragging) return;
+  dragImg.style.left = (posLeft + e.clientX - dragStartX) + 'px';
+  dragImg.style.top  = (posTop  + e.clientY - dragStartY) + 'px';
+});
+
+document.addEventListener('mouseup', function() {
+  if (!isDragging) return;
+  isDragging = false;
+  dragImg.classList.remove('grabbing');
+});
+
+// =====================================================
+//  INIT
+// =====================================================
+window.addEventListener('load', function() {
+  setupImg();
+  setTimeout(spawnText, 8000);
+  setTimeout(rotateTitre, 4000);
+});
+</script>
+</body>
+</html>
