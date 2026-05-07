@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.ico">
+<title>[ slyrame ] — film</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: "Courier New", monospace;
+  color: #111111;
+}
+
+#back {
+  position: fixed;
+  top: 14px;
+  left: 20px;
+  font-size: 11px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 2px;
+  z-index: 10;
+}
+#back:hover { color: #111111; }
+
+#donate {
+  position: fixed;
+  bottom: 18px;
+  right: 20px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 2px;
+  border: 1px solid rgba(0,0,0,0.10);
+  padding: 5px 10px;
+  transition: color 0.2s, border-color 0.2s;
+  z-index: 10;
+}
+#donate:hover { color: #111111; border-color: #111111; }
+
+/* ---- CENTRE ---- */
+#page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 60px 20px 40px 20px;
+  gap: 12px;
+}
+
+#film-annee {
+  font-size: 12px;
+  color: #111111;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+#film-titre {
+  font-size: 20px;
+  color: #111111;
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+#player-wrap {
+  width: 100%;
+  max-width: 820px;
+  aspect-ratio: 16/9;
+  background: #f0f0f0;
+  position: relative;
+}
+
+#player-wrap iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+}
+
+/* liste des films en bas */
+#film-list {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+#film-list .film-item {
+  font-size: 13px;
+  color: #111111;
+  cursor: pointer;
+  letter-spacing: 1px;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color 0.15s;
+}
+#film-list .film-item:hover { color: #111111; border-bottom-color: #111111; }
+#film-list .film-item.actif { color: #111111; border-bottom-color: #111111; }
+
+@media (max-width: 600px) {
+  #film-titre { font-size: 15px; letter-spacing: 2px; }
+  #film-annee { font-size: 10px; }
+  #page { padding: 50px 12px 60px 12px; gap: 10px; }
+  #player-wrap { max-width: 100%; }
+  #film-list { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<a id="back" href="./index.html">← accueil</a>
+<a id="donate" href="https://buymeacoffee.com/[ slyrame ]" target="_blank" rel="noopener">☕ donate</a>
+
+<div id="page">
+
+  <div id="film-annee"></div>
+  <div id="film-titre">—</div>
+  <div id="film-real" style="font-size:11px;color:rgba(0,0,0,0.25);letter-spacing:2px;text-align:center;margin-top:-6px;"></div>
+
+  <div id="player-wrap">
+    <iframe id="yt-el" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+  </div>
+
+  <div id="film-list"></div>
+
+</div>
+
+<script>
+// =====================================================
+//  AJOUTE TES FILMS ICI
+//  Place le fichier video dans le meme dossier
+// =====================================================
+var FILMS = [
+  { titre: "pauvre dame", real: "Titouan Bréüs Fréchin, Gaspard Farcy et Maëlys Gestin", src: "yvccidr9jVs", type: "yt" },
+  // { titre: "titre", real: "réalisateur", src: "ID_YOUTUBE", type: "yt" },
+  // { titre: "titre", real: "réalisateur", src: "film.mp4",   type: "mp4" },
+];
+// =====================================================
+
+var current = -1;
+
+function init() {
+  var list = document.getElementById('film-list');
+  if (!FILMS.length) {
+    list.innerHTML = '<span style="color:rgba(0,0,0,0.18);font-size:12px;letter-spacing:2px;">aucun film</span>';
+    return;
+  }
+  FILMS.forEach(function(f, i) {
+    var div = document.createElement('div');
+    div.className = 'film-item';
+    div.textContent = f.titre;
+    div.onclick = function(){ jouer(i); };
+    list.appendChild(div);
+  });
+  jouer(0);
+}
+
+function jouer(i) {
+  if (i < 0 || i >= FILMS.length) return;
+  var f = FILMS[i];
+  current = i;
+  document.querySelectorAll('.film-item').forEach(function(el){ el.classList.remove('actif'); });
+  document.querySelectorAll('.film-item')[i].classList.add('actif');
+  document.getElementById('film-titre').textContent = f.titre;
+  document.getElementById('film-annee').textContent = '';
+  document.getElementById('film-real').textContent = f.real || '';
+
+  var wrap = document.getElementById('player-wrap');
+  wrap.innerHTML = '';
+
+  if (f.type === 'yt') {
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + f.src + '?autoplay=1';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('allow', 'autoplay; encrypted-media');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    wrap.appendChild(iframe);
+  } else {
+    var video = document.createElement('video');
+    video.src = f.src;
+    video.controls = true;
+    video.autoplay = true;
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.display = 'block';
+    wrap.appendChild(video);
+  }
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

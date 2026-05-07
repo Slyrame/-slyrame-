@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.ico">
+<title>????</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: "Courier New", monospace;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#back {
+  position: fixed;
+  top: 14px;
+  left: 20px;
+  font-size: 11px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 2px;
+}
+#back:hover { color: #111111; }
+
+/* ---- MOT DE PASSE ---- */
+#screen-pwd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+#screen-pwd .label {
+  font-size: 11px;
+  color: #111111;
+  letter-spacing: 4px;
+}
+
+#pwd-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+  color: #111111;
+  font-family: "Courier New", monospace;
+  font-size: 18px;
+  letter-spacing: 6px;
+  width: 200px;
+  text-align: center;
+  outline: none;
+  padding: 4px 0;
+}
+#pwd-input::placeholder { color: #111111; }
+
+#pwd-btn {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.35);
+  color: #111111;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+#pwd-btn:hover { background: rgba(0,0,0,0.08); }
+
+#pwd-error {
+  font-size: 11px;
+  color: #111111;
+  letter-spacing: 2px;
+  min-height: 16px;
+}
+
+/* ---- LIEN ??? ---- */
+#lien {
+  display: none;
+  font-family: "Courier New", monospace;
+  font-size: 28px;
+  color: #111111;
+  text-decoration: none;
+  letter-spacing: 6px;
+}
+#lien:hover { color: #111111; }
+</style>
+</head>
+<body>
+
+<a id="back" href="./index.html">← accueil</a>
+
+<div id="screen-pwd">
+  <div class="label">????</div>
+  <input type="password" id="pwd-input" placeholder="· · · · · ·" autofocus>
+  <button id="pwd-btn" onclick="verifier()">entrer</button>
+  <div id="pwd-error"></div>
+</div>
+
+<a id="lien" href="https://www.instagram.com/samsaralchoolic/" target="_blank" rel="noopener">???</a>
+
+<script>
+var PASSWORD = "\x6c\x69\x6c\x6f\x75\x67\x6f\x73\x64\x65\x6e\x73\x65\x61\x72\x63\x68\x69\x6e\x67\x66\x6f\x72\x6c\x6f\x76\x65";
+
+document.getElementById('pwd-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') verifier();
+});
+
+function verifier() {
+  var val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('screen-pwd').style.display = 'none';
+    document.getElementById('lien').style.display = 'block';
+  } else {
+    var err = document.getElementById('pwd-error');
+    err.textContent = 'incorrect';
+    document.getElementById('pwd-input').value = '';
+    setTimeout(function(){ err.textContent = ''; }, 1500);
+  }
+}
+</script>
+</body>
+</html>
