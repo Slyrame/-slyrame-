@@ -249,7 +249,7 @@ function init() {
 
   document.title = '[ slyrame ] — ' + album.titre;
   document.getElementById('album-cover').src = album.cover || '';
-  document.getElementById('album-titre').textContent = album.titre;
+  if(document.getElementById('album-titre')) document.getElementById('album-titre').textContent = album.titre;
   document.getElementById('album-artiste').textContent = album.artiste || '';
   if (album.annee) {
     document.getElementById('album-annee').textContent = album.annee;
