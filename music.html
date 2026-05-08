@@ -22,45 +22,147 @@ html, body { width:100%; min-height:100vh; background:#ffffff; font-family:"Cour
   width:100%;
 }
 
-/* BBS — petit, fixé à gauche */
-#col-bbs {
-  width:180px;
-  min-width:140px;
-  flex-shrink:0;
-  padding:60px 12px 24px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  border-right:1px solid rgba(0,0,0,0.05);
+/* BBS — fenetre Windows 97 */
+#win97 {
+  position: fixed;
+  top: 60px;
+  left: 16px;
+  width: 220px;
+  z-index: 100;
+  font-family: "Arial", sans-serif;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #ffffff;
+  background: #c0c0c0;
+  cursor: default;
+  user-select: none;
 }
 
-#bbs-messages {
-  height:200px;
-  overflow-y:auto;
-  font-size:10px;
-  line-height:1.6;
-  scrollbar-width:none;
-  color:rgba(0,0,0,0.6);
+/* barre de titre */
+#win97-titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
 }
-#bbs-messages::-webkit-scrollbar { display:none; }
-.msg-entry { margin-bottom:8px; }
-.msg-pseudo { font-weight:bold; font-size:10px; color:#111; }
-.msg-date { color:rgba(0,0,0,0.28); font-size:9px; }
-.msg-text { font-size:10px; margin-top:1px; word-break:break-word; }
+#win97-titlebar-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+#win97-titlebar-text::before {
+  content: "💬";
+  font-size: 10px;
+}
+#win97-btns {
+  display: flex;
+  gap: 2px;
+}
+.win97-btn {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: none;
+  font-size: 8px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+  color: #111;
+  font-family: Arial, sans-serif;
+}
+.win97-btn:active {
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff;
+}
 
-#col-bbs input[type="text"], #col-bbs textarea {
-  background:transparent; border:none; border-bottom:1px solid rgba(0,0,0,0.2);
-  color:#111111; font-family:"Courier New",monospace; font-size:10px;
-  width:100%; outline:none; padding:2px 2px;
+/* corps */
+#win97-body {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-#col-bbs textarea { height:40px; resize:none; margin-top:4px; border:1px solid rgba(0,0,0,0.15); padding:3px; font-size:10px; }
-#col-bbs button {
-  background:transparent; border:1px solid rgba(0,0,0,0.3); color:#111111;
-  font-family:"Courier New",monospace; font-size:9px; cursor:pointer;
-  padding:3px 10px; margin-top:4px; letter-spacing:1px; width:fit-content;
+
+/* zone messages — style textarea sunken */
+#win97-messages {
+  height: 160px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: none;
+  box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+  padding: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #111;
 }
-#col-bbs button:hover { background:rgba(0,0,0,0.04); }
-#bbs-label { font-size:9px; color:rgba(0,0,0,0.28); letter-spacing:2px; margin-bottom:4px; }
+#win97-messages .msg-entry { margin-bottom: 5px; border-bottom: 1px dotted #ccc; padding-bottom: 4px; }
+#win97-messages .msg-pseudo { font-weight: bold; color: #000080; }
+#win97-messages .msg-date { color: #808080; font-size: 9px; }
+#win97-messages .msg-text { color: #111; margin-top: 1px; word-break: break-word; }
+
+/* séparateur */
+.win97-separator {
+  height: 2px;
+  box-shadow: inset 0 1px #808080, inset 0 2px #ffffff;
+  margin: 2px 0;
+}
+
+/* label + input style */
+.win97-label {
+  font-size: 10px;
+  color: #111;
+  font-family: Arial, sans-serif;
+  margin-bottom: 1px;
+}
+#win97-pseudo {
+  width: 100%;
+  font-size: 10px;
+  font-family: "Courier New", monospace;
+  padding: 2px 3px;
+  background: #ffffff;
+  border: none;
+  box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+  outline: none;
+  color: #111;
+}
+#win97-msg {
+  width: 100%;
+  height: 44px;
+  font-size: 10px;
+  font-family: "Courier New", monospace;
+  padding: 2px 3px;
+  background: #ffffff;
+  border: none;
+  box-shadow: inset -1px -1px #ffffff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+  outline: none;
+  resize: none;
+  color: #111;
+}
+
+/* bouton send style win97 */
+#win97-send {
+  align-self: flex-end;
+  background: #c0c0c0;
+  border: none;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #ffffff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  padding: 3px 14px;
+  cursor: pointer;
+  color: #111;
+  letter-spacing: 0;
+}
+#win97-send:active {
+  box-shadow: inset 1px 1px #0a0a0a, inset -1px -1px #ffffff;
+  padding: 4px 13px 2px 15px;
+}
 
 /* CENTRE — albums */
 #col-main {
@@ -142,13 +244,26 @@ html, body { width:100%; min-height:100vh; background:#ffffff; font-family:"Cour
 
 <div id="page">
 
-  <div id="col-bbs">
-    <div id="bbs-label">messages</div>
-    <div id="bbs-messages"></div>
-    <input type="text" id="pseudo" placeholder="pseudo">
-    <textarea id="msg" placeholder="message..."></textarea>
-    <button onclick="poster()">SEND</button>
+<!-- FENETRE WINDOWS 97 BBS -->
+<div id="win97">
+  <div id="win97-titlebar" onmousedown="startDrag(event)">
+    <div id="win97-titlebar-text">messages</div>
+    <div id="win97-btns">
+      <button class="win97-btn" onclick="toggleMin()">_</button>
+      <button class="win97-btn">□</button>
+      <button class="win97-btn" style="color:#c0c0c0;background:#c0c0c0;font-weight:bold;" onclick="toggleMin()">✕</button>
+    </div>
   </div>
+  <div id="win97-body">
+    <div id="win97-messages"></div>
+    <div class="win97-separator"></div>
+    <div class="win97-label">Pseudo :</div>
+    <input type="text" id="pseudo" id="win97-pseudo" placeholder="VotreNom" style="width:100%;font-size:10px;font-family:'Courier New',monospace;padding:2px 3px;background:#fff;border:none;box-shadow:inset -1px -1px #fff,inset 1px 1px #808080,inset -2px -2px #dfdfdf,inset 2px 2px #0a0a0a;outline:none;">
+    <div class="win97-label" style="margin-top:4px;">Message :</div>
+    <textarea id="msg" style="width:100%;height:44px;font-size:10px;font-family:'Courier New',monospace;padding:2px 3px;background:#fff;border:none;box-shadow:inset -1px -1px #fff,inset 1px 1px #808080,inset -2px -2px #dfdfdf,inset 2px 2px #0a0a0a;outline:none;resize:none;"></textarea>
+    <button id="win97-send" onclick="poster()">Envoyer</button>
+  </div>
+</div>
 
   <div id="col-main">
     <div id="albums-label">Albums</div>
@@ -227,14 +342,38 @@ function chargerFirebase() {
   }).catch(function(){});
 }
 function afficher(msgs) {
-  var c = document.getElementById('bbs-messages');
-  if (!msgs||!msgs.length) { c.innerHTML='<div style="color:rgba(0,0,0,0.28);font-size:9px;font-style:italic;">aucun message</div>'; return; }
+  var c = document.getElementById('win97-messages');
+  if (!msgs||!msgs.length) { c.innerHTML='<div style="color:#808080;font-size:9px;font-style:italic;">aucun message</div>'; return; }
   var h='';
   for (var i=msgs.length-1;i>=0;i--) {
     var m=msgs[i];
     h+='<div class="msg-entry"><span class="msg-pseudo">'+x(m.p)+'</span> <span class="msg-date">'+m.d+'</span><div class="msg-text">'+x(m.t).replace(/\n/g,'<br>')+'</div></div>';
   }
   c.innerHTML=h;
+}
+
+// DRAG FENETRE
+var dragActive = false, dragOX, dragOY, winX = 16, winY = 60;
+function startDrag(e) {
+  dragActive = true;
+  winX = parseInt(document.getElementById('win97').style.left || 16);
+  winY = parseInt(document.getElementById('win97').style.top  || 60);
+  dragOX = e.clientX; dragOY = e.clientY;
+  e.preventDefault();
+}
+document.addEventListener('mousemove', function(e) {
+  if (!dragActive) return;
+  var dx = e.clientX - dragOX, dy = e.clientY - dragOY;
+  document.getElementById('win97').style.left = (winX + dx) + 'px';
+  document.getElementById('win97').style.top  = (winY + dy) + 'px';
+});
+document.addEventListener('mouseup', function() { dragActive = false; });
+
+// MINIMIZE
+var minimized = false;
+function toggleMin() {
+  minimized = !minimized;
+  document.getElementById('win97-body').style.display = minimized ? 'none' : 'flex';
 }
 function x(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function poster() {
